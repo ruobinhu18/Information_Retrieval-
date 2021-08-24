@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: lightskyblue;
+        }
+    </style>
+    <title>Washington Post Search</title>
+</head>
+<h3>Washington Post Search</h3>
+<form action="{{ url_for('results') }}" name="search" method="post">
+    <label for="query">Query:</label>
+    <input type="text" id="query" name="query" size=50 value="{{ query_text }}">
+    <input type="submit" value="Search">
+</form>
+
+<form action="{{ url_for('home') }}">
+    <input type="submit" value="Home">
+</form>
+<h3> idf scores for all terms {{ idf_score }} </h3>
+<h3> Results for "{{query_text}}" (page {{ page_id }}/{{ page_num }}): </h3>
+<h3> Total hits: {{ hits }} </h3>
+{# handling stopwords#}
+{%  if stopwords %}
+    <h3> Ignoring term: {{ stopwords }} </h3>
+{% endif %}
+
+{# handling unknowns#}
+{%  if unknowns %}
+    <h3> Unknown search term: {{ unknowns }} </h3>
+{% endif %}
+<br><br>
+{%  if page_id<page_num %}
+    {% for i in range((page_id-1)*8, page_id*8) %}
+        <h4> {{ i + 1 }}. [{{ score_lst[i] }}] <a href={{ url_for('doc_data',doc_id=result_lst[i]['doc_id'])  }}>  <strong>{{ result_lst[i]['title'] }}</strong> </a> </h4>
+        <p> {{ result_lst[i]['content_str'][:150] }} ... </p>
+        <p> query terms found: {{ term_lst[i] }} </p>
+    {%  endfor %}
+{% else %}
+    {% for i in range((page_id-1)*8, num) %}
+        <h4> {{ i + 1 }}. [{{ score_lst[i] }}]<a href={{ url_for('doc_data',doc_id=result_lst[i]['doc_id'])  }}>  <strong>{{ result_lst[i]['title'] }}</strong> </a> </h4>
+        <p> {{ result_lst[i]['content_str'][:150] }} ... </p>
+        <p> query terms found: {{ term_lst[i] }} </p>
+    {%  endfor %}
+{% endif %}
+<br>
+{%  if page_id>1 %}
+    {% set new_page_id = page_id - 1 %}
+    <form action="{{ url_for('next_page', page_id=new_page_id) }}" method="post">
+    <input type="submit" value="Prev Page">
+    </form>
+{% endif %}
+{%  if page_id<page_num %}
+    {% set new_page_id = page_id + 1 %}
+    <form action="{{ url_for('next_page', page_id=new_page_id) }}" method="post">
+    <input type="submit" value="Next Page">
+    </form>
+{% endif %}
+
+
+</body>
+</html>

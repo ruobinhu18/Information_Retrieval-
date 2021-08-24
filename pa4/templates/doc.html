@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: lightskyblue;
+        }
+    </style>
+    <title> {{ doc["title"] }} </title>
+</head>
+<body>
+<h3>{{ doc["title"] }}</h3>
+<h4>Author: {{ doc["author"] }}</h4>
+<h4>Date: {{ doc["published_date"] }}</h4>
+<p> {{ doc["content_str"] | safe}} </p>
+
+</body>
+</html>
